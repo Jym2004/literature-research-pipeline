@@ -10,7 +10,7 @@ A portable, Zotero-first Agent Skill for literature research workflows across Go
 - Import records into Zotero with deduplication, tags, and structured reading notes
 - Preserve metadata and provide a fallback workflow when PDF download fails
 - Optionally create topic syntheses in Obsidian
-- Use an integrated workflow without relying on sibling source-specific skills
+
 
 ## Requirements
 
