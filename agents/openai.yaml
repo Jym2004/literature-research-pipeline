@@ -1,0 +1,12 @@
+interface:
+  display_name: "Literature Research Pipeline"
+  short_description: "Search, screen, import, and synthesize research papers"
+  default_prompt: "Use $literature-research-pipeline to search recent papers across Google Scholar, IEEE Xplore, and arXiv, save the best results to Zotero, and create reading cards."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "chrome-devtools"
+      description: "Browser automation for Google Scholar and IEEE Xplore"
+    - type: "mcp"
+      value: "zotero"
+      description: "Zotero library lookup, child notes, and tags"
