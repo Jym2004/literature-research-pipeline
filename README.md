@@ -10,12 +10,11 @@
 - 导入 Zotero，并进行去重、标签整理和阅读笔记生成
 - PDF 下载失败时保留元数据并提供回退流程
 - 可选：在 Obsidian 中生成主题综述
-
+- 已整合必要流程，不依赖本地其他检索类 skill
 
 ## 运行要求
 
 - Python 3.10+
-- Python 包：`arxiv`
 - Zotero Desktop
 - Chrome DevTools MCP
 - Zotero MCP
@@ -51,12 +50,6 @@ Claude Code 也支持仅在当前项目中安装：
 <project>/.claude/skills/literature-research-pipeline
 ```
 
-安装 Python 依赖：
-
-```bash
-pip install arxiv
-```
-
 运行环境检查：
 
 ```text
@@ -79,8 +72,13 @@ Zotero Desktop 还需要开放本机 Connector API：
 http://127.0.0.1:23119/connector
 ```
 
-## 发布状态
+## arXiv 访问说明
 
+arXiv 分支优先使用官方 API，并遵守请求间隔限制。脚本包含跨进程节流、本地缓存和冷却机制。API 返回 `429` 或超时时，会自动回退到 arXiv 官方搜索页和摘要页。
+
+Thank you to arXiv for use of its open access interoperability.
+
+## 发布状态
 
 当前已在 Windows 上测试。Linux / Ubuntu 和 macOS 尚未进行完整实机验证。
 

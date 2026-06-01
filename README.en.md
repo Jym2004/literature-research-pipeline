@@ -10,12 +10,11 @@ A portable, Zotero-first Agent Skill for literature research workflows across Go
 - Import records into Zotero with deduplication, tags, and structured reading notes
 - Preserve metadata and provide a fallback workflow when PDF download fails
 - Optionally create topic syntheses in Obsidian
-
+- Use an integrated workflow without relying on sibling source-specific skills
 
 ## Requirements
 
 - Python 3.10+
-- Python package: `arxiv`
 - Zotero Desktop
 - Chrome DevTools MCP
 - Zotero MCP
@@ -51,12 +50,6 @@ Claude Code also supports project-scoped installation:
 <project>/.claude/skills/literature-research-pipeline
 ```
 
-Install the Python dependency:
-
-```bash
-pip install arxiv
-```
-
 Run the environment preflight check:
 
 ```text
@@ -79,8 +72,13 @@ Zotero Desktop must also expose its local Connector API:
 http://127.0.0.1:23119/connector
 ```
 
-## Release Status
+## arXiv Access
 
+The arXiv branch prefers the official API and respects its request interval. The scripts include cross-process throttling, a local cache, and cooldown handling. When the API returns `429` or times out, they automatically fall back to official arXiv search and abstract pages.
+
+Thank you to arXiv for use of its open access interoperability.
+
+## Release Status
 
 The workflow has been tested on Windows. Linux / Ubuntu and macOS have not yet received complete real-machine testing.
 
