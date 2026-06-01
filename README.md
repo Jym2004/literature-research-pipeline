@@ -81,7 +81,6 @@ http://127.0.0.1:23119/connector
 
 ## 发布状态
 
-当前版本：`v0.1.0-beta`
 
 当前已在 Windows 上测试。Linux / Ubuntu 和 macOS 尚未进行完整实机验证。
 
