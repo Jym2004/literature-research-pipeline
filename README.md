@@ -2,7 +2,7 @@
 
 中文 | [English](README.en.md)
 
-一个可移植、以 Zotero 为核心的 Codex 文献研究 skill，支持 Google Scholar、IEEE Xplore 和 arXiv。
+一个可移植、以 Zotero 为核心的 Agent Skill，支持 Google Scholar、IEEE Xplore 和 arXiv，可用于 Codex 和 Claude Code。
 
 ## 功能
 
@@ -32,10 +32,23 @@
 
 ## 安装
 
-将本仓库放入 Codex 的 skills 目录，并保持目录名为：
+将本仓库放入所使用客户端的个人 skills 目录，并保持目录名为：
 
 ```text
 literature-research-pipeline
+```
+
+常见安装位置：
+
+```text
+Codex:       ~/.codex/skills/literature-research-pipeline
+Claude Code: ~/.claude/skills/literature-research-pipeline
+```
+
+Claude Code 也支持仅在当前项目中安装：
+
+```text
+<project>/.claude/skills/literature-research-pipeline
 ```
 
 安装 Python 依赖：
@@ -54,7 +67,7 @@ Windows 通常使用 `python` 或 `py -3`，Linux 和 macOS 通常使用 `python
 
 ## MCP 依赖说明
 
-本仓库不包含 MCP 服务端代码。使用前需要单独配置：
+本仓库不包含 MCP 服务端代码。使用前需要在所使用的客户端中单独配置：
 
 - Chrome DevTools MCP：用于 Google Scholar 和 IEEE Xplore 浏览器自动化
 - Zotero MCP：用于 Zotero 文献检索、去重、标签和笔记管理

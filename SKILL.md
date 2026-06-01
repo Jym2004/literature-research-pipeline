@@ -1,6 +1,6 @@
 ---
 name: literature-research-pipeline
-description: Run a portable Zotero-first literature workflow across Google Scholar, IEEE Xplore, and arXiv. Use when Codex needs to search multiple academic sources, screen and de-duplicate papers, import selected records and PDFs into Zotero, write structured reading-card notes, or optionally create an Obsidian topic synthesis. This skill is self-contained and must not depend on sibling source-specific skills.
+description: Run a portable Zotero-first literature workflow across Google Scholar, IEEE Xplore, and arXiv. Use when an AI coding agent needs to search multiple academic sources, screen and de-duplicate papers, import selected records and PDFs into Zotero, write structured reading-card notes, or optionally create an Obsidian topic synthesis. This skill is self-contained and must not depend on sibling source-specific skills.
 ---
 
 # Literature Research Pipeline

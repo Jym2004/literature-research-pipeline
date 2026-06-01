@@ -2,7 +2,7 @@
 
 [中文](README.md) | English
 
-A portable, Zotero-first Codex skill for literature research workflows across Google Scholar, IEEE Xplore, and arXiv.
+A portable, Zotero-first Agent Skill for literature research workflows across Google Scholar, IEEE Xplore, and arXiv. It can be used with Codex and Claude Code.
 
 ## Features
 
@@ -32,10 +32,23 @@ Optional component:
 
 ## Installation
 
-Place this repository in your Codex skills directory and keep the directory name as:
+Place this repository in the personal skills directory for your client and keep the directory name as:
 
 ```text
 literature-research-pipeline
+```
+
+Common installation locations:
+
+```text
+Codex:       ~/.codex/skills/literature-research-pipeline
+Claude Code: ~/.claude/skills/literature-research-pipeline
+```
+
+Claude Code also supports project-scoped installation:
+
+```text
+<project>/.claude/skills/literature-research-pipeline
 ```
 
 Install the Python dependency:
@@ -54,7 +67,7 @@ On Windows, `<python>` is typically `python` or `py -3`. On Linux and macOS, it 
 
 ## MCP Dependencies
 
-This repository does not bundle MCP server code. Configure the following components separately before use:
+This repository does not bundle MCP server code. Configure the following components separately in your client before use:
 
 - Chrome DevTools MCP: browser automation for Google Scholar and IEEE Xplore
 - Zotero MCP: Zotero library lookup, deduplication, tags, and reading notes
