@@ -6,32 +6,19 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import re
 import sys
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
 from typing import Any
 
+from arxiv_support import normalize_identifier, records_for_identifiers
+
 
 CONNECTOR_URL = "http://127.0.0.1:23119/connector"
 JSON_TIMEOUT_SECONDS = 15
 PDF_TIMEOUT_SECONDS = 60
 USER_AGENT = "literature-research-pipeline/1.0 (+https://arxiv.org)"
-
-
-def normalize_identifier(value: str) -> str:
-    """Normalize an arXiv URL or identifier to its unversioned identifier."""
-    identifier = value.strip()
-    identifier = re.sub(
-        r"^https?://(?:www\.)?arxiv\.org/(?:abs|pdf)/",
-        "",
-        identifier,
-        flags=re.IGNORECASE,
-    )
-    identifier = identifier.rstrip("/")
-    identifier = re.sub(r"\.pdf$", "", identifier, flags=re.IGNORECASE)
-    return re.sub(r"v\d+$", "", identifier)
 
 
 def json_request(endpoint: str, payload: dict[str, Any] | None = None) -> tuple[int, Any]:
@@ -60,18 +47,7 @@ def json_request(endpoint: str, payload: dict[str, Any] | None = None) -> tuple[
 
 def fetch_results(identifiers: list[str]) -> list[Any]:
     """Load arXiv metadata and preserve caller order."""
-    import arxiv  # type: ignore[import-not-found]
-
-    normalized = [normalize_identifier(identifier) for identifier in identifiers]
-    results = list(arxiv.Client().results(arxiv.Search(id_list=normalized)))
-    indexed = {
-        normalize_identifier(getattr(result, "entry_id", "")): result
-        for result in results
-    }
-    missing = [identifier for identifier in normalized if identifier not in indexed]
-    if missing:
-        raise ValueError(f"Could not fetch metadata for: {', '.join(missing)}")
-    return [indexed[identifier] for identifier in normalized]
+    return [record.to_result_adapter() for record in records_for_identifiers(identifiers)]
 
 
 def creator(name: str) -> dict[str, str]:
@@ -89,9 +65,12 @@ def creator(name: str) -> dict[str, str]:
 def make_item(result: Any) -> tuple[dict[str, Any], str]:
     """Build one Zotero report item and its PDF URL."""
     identifier = normalize_identifier(result.entry_id)
+    versioned_identifier = getattr(result, "versioned_id", "") or identifier
     categories = list(getattr(result, "categories", None) or [])
     published = getattr(result, "published", None)
-    extras = [f"arXiv: {identifier}"]
+    extras = [f"arXiv: {identifier}", f"arXiv version: {versioned_identifier}"]
+    if getattr(result, "metadata_source", None):
+        extras.append(f"Metadata source: {result.metadata_source}")
     if getattr(result, "journal_ref", None):
         extras.append(f"Journal: {result.journal_ref}")
     if getattr(result, "comment", None):
@@ -104,7 +83,7 @@ def make_item(result: Any) -> tuple[dict[str, Any], str]:
         "title": (getattr(result, "title", "") or "").strip(),
         "abstractNote": getattr(result, "summary", "") or "",
         "date": published.date().isoformat() if published else "",
-        "url": f"https://arxiv.org/abs/{identifier}",
+        "url": f"https://arxiv.org/abs/{versioned_identifier}",
         "DOI": getattr(result, "doi", "") or "",
         "archive": "arXiv",
         "libraryCatalog": "arXiv",
@@ -120,7 +99,7 @@ def make_item(result: Any) -> tuple[dict[str, Any], str]:
         "attachments": [],
         "extra": "\n".join(extras),
     }
-    return item, f"https://arxiv.org/pdf/{identifier}.pdf"
+    return item, f"https://arxiv.org/pdf/{versioned_identifier}.pdf"
 
 
 def session_id(items: list[dict[str, Any]]) -> str:
@@ -243,11 +222,6 @@ def main() -> int:
     try:
         results = fetch_results(args.identifiers)
         payload = import_results(results, skip_pdf=args.skip_pdf)
-    except ImportError:
-        payload = {
-            "success": False,
-            "error": f"Install the arxiv package with: {sys.executable} -m pip install arxiv",
-        }
     except Exception as exc:
         payload = {"success": False, "error": str(exc)}
 

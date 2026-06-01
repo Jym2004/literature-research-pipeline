@@ -19,7 +19,6 @@ Require:
 - Zotero Desktop and its local Connector API at `http://127.0.0.1:23119/connector`
 - Zotero MCP for library de-duplication, child notes, and tags
 - Python 3.10 or later
-- Python package `arxiv` when the arXiv branch is enabled
 
 Treat Obsidian MCP as optional. Use it only when the user requests a topic map, reading plan, method comparison, reproduction roadmap, or durable Obsidian note.
 
@@ -64,6 +63,11 @@ Run browser branches serially because Chrome DevTools MCP shares page context.
 ```text
 <python> "<skill-dir>/scripts/arxiv_search.py" "<query>" --max-papers <N> --format json
 ```
+
+The bundled arXiv scripts use the official API politely with cross-process
+throttling and local caching. When the API is cooling down after a `429` or
+timeout, they fall back to official arXiv HTML pages. Preserve
+`metadata_source` and the versioned arXiv identifier returned by the script.
 
 Preserve stable source identifiers:
 

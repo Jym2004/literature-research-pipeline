@@ -11,17 +11,14 @@ Session strategy: deterministic sessionID derived from content hash.
 - 409 = SESSION_EXISTS = already saved (idempotent, treat as success)
 """
 
+import argparse
 import json
 import sys
-import io
 import hashlib
 import urllib.request
 import urllib.error
 import re
 from datetime import datetime, timezone
-
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 
 ZOTERO_API = 'http://127.0.0.1:23119/connector'
 HTTP_TIMEOUT = 15
@@ -303,7 +300,16 @@ def save_attachment(session_id, parent_item_id, pdf_bytes, pdf_url,
 
 def main():
     """Main entry point. Accepts JSON paper data from file argument."""
-    if len(sys.argv) > 1 and sys.argv[1] == '--list':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        'json_file',
+        nargs='?',
+        help='Path to JSON paper data. Reads stdin when omitted.',
+    )
+    parser.add_argument('--list', action='store_true', help='List Zotero collections')
+    args = parser.parse_args()
+
+    if args.list:
         list_collections()
         return
 
@@ -319,8 +325,8 @@ def main():
         print(f'Zotero collection: {col.get("name", "?")}')
 
     # Read paper data from file argument
-    if len(sys.argv) > 1 and sys.argv[1] != '--list':
-        with open(sys.argv[1], 'r', encoding='utf-8') as f:
+    if args.json_file:
+        with open(args.json_file, 'r', encoding='utf-8') as f:
             paper_data = json.load(f)
     else:
         paper_data = json.load(sys.stdin)

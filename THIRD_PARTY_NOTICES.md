@@ -47,3 +47,12 @@ adapted MIT-licensed workflow components in this package.
 The arXiv scripts in this package are independently written portable
 implementations and are not copied from the previously installed local
 `arxiv-search` skill.
+
+## arXiv API
+
+- Documentation: https://info.arxiv.org/help/api/
+- Terms of use: https://info.arxiv.org/help/api/tou.html
+- Use in this package: metadata search and lookup through the official API,
+  with polite throttling, local caching, and official HTML fallback.
+
+Thank you to arXiv for use of its open access interoperability.

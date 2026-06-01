@@ -13,6 +13,7 @@ literature-research-pipeline/
 |   `-- openai.yaml
 |-- scripts/
 |   |-- preflight.py
+|   |-- arxiv_support.py
 |   |-- arxiv_search.py
 |   |-- arxiv_to_zotero.py
 |   |-- scholar_to_zotero.py
@@ -34,7 +35,6 @@ literature-research-pipeline/
 Required:
 
 - Python 3.10 or later
-- `<python> -m pip install arxiv`
 - Zotero Desktop with local Connector API enabled
 - Chrome DevTools MCP
 - Zotero MCP
@@ -48,10 +48,17 @@ Optional:
 ## Installation
 
 Read [platform-support.md](platform-support.md). Copy the entire
-`literature-research-pipeline` directory into the target Codex skills directory:
+`literature-research-pipeline` directory into the personal skills directory for
+the target client:
 
 ```text
 ${CODEX_HOME}/skills
+```
+
+For Claude Code, use:
+
+```text
+~/.claude/skills
 ```
 
 If `CODEX_HOME` is unset, use the platform default:

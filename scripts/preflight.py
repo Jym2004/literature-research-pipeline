@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import platform
 import sys
@@ -17,6 +16,7 @@ from typing import Any
 ZOTERO_API = "http://127.0.0.1:23119/connector"
 REQUIRED_SCRIPTS = (
     "arxiv_search.py",
+    "arxiv_support.py",
     "arxiv_to_zotero.py",
     "scholar_to_zotero.py",
     "ieee_to_zotero.py",
@@ -96,17 +96,6 @@ def run_checks(skip_zotero: bool, skip_arxiv: bool) -> dict[str, Any]:
         else f"missing: {', '.join(missing_scripts)}",
     )
 
-    if not skip_arxiv:
-        arxiv_ok = importlib.util.find_spec("arxiv") is not None
-        add_check(
-            checks,
-            "python-package-arxiv",
-            arxiv_ok,
-            "installed"
-            if arxiv_ok
-            else f"missing; install with: {sys.executable} -m pip install arxiv",
-        )
-
     if not skip_zotero:
         ping_status, ping_data = connector_request("ping")
         add_check(
@@ -159,7 +148,7 @@ def main() -> None:
     parser.add_argument(
         "--skip-arxiv",
         action="store_true",
-        help="Skip the optional arxiv Python package check.",
+        help="Deprecated compatibility flag; arXiv access now uses the standard library.",
     )
     parser.add_argument("--json", action="store_true", help="Print JSON output.")
     args = parser.parse_args()

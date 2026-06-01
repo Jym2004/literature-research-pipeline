@@ -5,57 +5,37 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
-import sys
-from typing import Any
+
+from arxiv_support import search_records
 
 
-def base_arxiv_id(value: str) -> str:
-    """Return an arXiv identifier without URL wrappers or version suffixes."""
-    identifier = value.strip().rstrip("/").split("/")[-1]
-    identifier = re.sub(r"\.pdf$", "", identifier, flags=re.IGNORECASE)
-    return re.sub(r"v\d+$", "", identifier)
-
-
-def serialize_result(result: Any) -> dict[str, Any]:
-    """Convert one arxiv.Result instance to a stable JSON record."""
-    identifier = base_arxiv_id(result.entry_id)
-    published = getattr(result, "published", None)
-    updated = getattr(result, "updated", None)
+def serialize_result(result: object) -> dict[str, object]:
+    """Convert one portable record to a stable JSON payload."""
     return {
-        "arxiv_id": identifier,
-        "title": (getattr(result, "title", "") or "").strip(),
-        "authors": [
-            getattr(author, "name", str(author))
-            for author in (getattr(result, "authors", None) or [])
-        ],
-        "published": published.isoformat() if published else "",
-        "updated": updated.isoformat() if updated else "",
-        "abs_url": f"https://arxiv.org/abs/{identifier}",
-        "pdf_url": f"https://arxiv.org/pdf/{identifier}.pdf",
-        "summary": (getattr(result, "summary", "") or "").strip(),
-        "primary_category": getattr(result, "primary_category", "") or "",
-        "categories": list(getattr(result, "categories", None) or []),
-        "doi": getattr(result, "doi", "") or "",
-        "journal_ref": getattr(result, "journal_ref", "") or "",
-        "comment": getattr(result, "comment", "") or "",
+        "arxiv_id": result.arxiv_id,
+        "arxiv_versioned_id": result.versioned_id,
+        "title": result.title,
+        "authors": result.authors,
+        "published": result.published,
+        "updated": result.updated,
+        "abs_url": result.entry_id,
+        "pdf_url": result.pdf_url,
+        "summary": result.summary,
+        "primary_category": result.primary_category,
+        "categories": result.categories or [],
+        "doi": result.doi,
+        "journal_ref": result.journal_ref,
+        "comment": result.comment,
+        "metadata_source": result.metadata_source,
     }
 
 
-def search_arxiv(query: str, limit: int) -> list[dict[str, Any]]:
-    """Run one relevance-sorted arXiv query."""
-    import arxiv  # type: ignore[import-not-found]
-
-    client = arxiv.Client()
-    search = arxiv.Search(
-        query=query,
-        max_results=limit,
-        sort_by=arxiv.SortCriterion.Relevance,
-    )
-    return [serialize_result(result) for result in client.results(search)]
+def search_arxiv(query: str, limit: int) -> list[dict[str, object]]:
+    """Search arXiv through the API with official HTML fallback."""
+    return [serialize_result(result) for result in search_records(query, limit)]
 
 
-def render_text(records: list[dict[str, Any]]) -> str:
+def render_text(records: list[dict[str, object]]) -> str:
     """Render records for interactive use."""
     if not records:
         return "No papers found on arXiv."
@@ -90,14 +70,8 @@ def main() -> int:
 
     try:
         records = search_arxiv(args.query, args.max_papers)
-    except ImportError:
-        print(
-            f"Error: install the arxiv package with: {sys.executable} -m pip install arxiv",
-            file=sys.stderr,
-        )
-        return 1
     except Exception as exc:
-        print(f"Error querying arXiv: {exc}", file=sys.stderr)
+        print(f"Error querying arXiv: {exc}")
         return 1
 
     if args.format == "json":

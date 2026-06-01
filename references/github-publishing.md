@@ -14,13 +14,14 @@ workflow components are adapted from MIT-licensed upstream repositories.
 State these points prominently in the GitHub repository description or release
 notes:
 
-1. This is a Codex skill for a Zotero-first literature workflow across Google
-   Scholar, IEEE Xplore, and arXiv.
+1. This is an Agent Skill for a Zotero-first literature workflow across Google
+   Scholar, IEEE Xplore, and arXiv. It supports Codex and Claude Code.
 2. The skill is self-contained and does not require sibling skills.
 3. Chrome DevTools MCP and Zotero MCP must be configured separately.
 4. Zotero Desktop must be running locally for imports.
 5. Python 3.10 or later is required.
-6. The arXiv branch requires `<python> -m pip install arxiv`.
+6. The arXiv branch uses the official API with polite throttling, local cache,
+   cooldown handling, and official HTML fallback.
 7. Obsidian MCP, MinerU, and Serper integrations are optional.
 8. Windows, Linux, and macOS use the same Python scripts; Linux and macOS still
    require target-machine smoke tests before claiming verified support.
@@ -39,6 +40,8 @@ State these operational constraints:
   `http://127.0.0.1:23119/connector`.
 - Zotero MCP is still required for library de-duplication, reading-card notes,
   and state tags.
+- arXiv API requests are rate-limited and serialized. The scripts cache results
+  locally and use official HTML pages when the API is cooling down.
 
 ## Privacy Notes
 
@@ -72,7 +75,8 @@ under the selected license. If code was adapted from another repository,
 retain required notices and attribution.
 
 Keep `THIRD_PARTY_NOTICES.md` in the repository and release archive. The arXiv
-scripts are independently written implementations.
+scripts are independently written implementations. Include the arXiv
+interoperability acknowledgement retained in `THIRD_PARTY_NOTICES.md`.
 
 Do not claim affiliation with Google Scholar, IEEE, arXiv, Zotero, Obsidian, or
 MinerU. Mention trademarks only to explain interoperability.
@@ -80,10 +84,16 @@ MinerU. Mention trademarks only to explain interoperability.
 ## Installation Notes
 
 Tell users to read [platform-support.md](platform-support.md) and copy the full
-skill directory into:
+skill directory into the personal skills directory for their client:
 
 ```text
 ${CODEX_HOME}/skills
+```
+
+For Claude Code, use:
+
+```text
+~/.claude/skills
 ```
 
 When `CODEX_HOME` is unset, use:

@@ -41,21 +41,14 @@ unset, use:
 Required on every platform:
 
 - Python 3.10 or later
-- `arxiv` Python package
 - Zotero Desktop
 - Chrome DevTools MCP
 - Zotero MCP
 
-Install the Python dependency with:
-
-```text
-<python> -m pip install arxiv
-```
-
 ## Validation Scope
 
 `scripts/preflight.py` validates the operating system, Python version, bundled
-scripts, the `arxiv` package, and the local Zotero Connector API.
+scripts and the local Zotero Connector API.
 
 MCP registrations and browser authentication remain manual checks.
 
