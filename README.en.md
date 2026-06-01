@@ -81,7 +81,6 @@ http://127.0.0.1:23119/connector
 
 ## Release Status
 
-Current version: `v0.1.0-beta`
 
 The workflow has been tested on Windows. Linux / Ubuntu and macOS have not yet received complete real-machine testing.
 
