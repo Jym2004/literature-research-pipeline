@@ -1,0 +1,75 @@
+# Literature Research Pipeline
+
+[中文](README.md) | English
+
+A portable, Zotero-first Codex skill for literature research workflows across Google Scholar, IEEE Xplore, and arXiv.
+
+## Features
+
+- Search and screen papers across multiple sources
+- Import records into Zotero with deduplication, tags, and structured reading notes
+- Preserve metadata and provide a fallback workflow when PDF download fails
+- Optionally create topic syntheses in Obsidian
+- Use an integrated workflow without relying on sibling source-specific skills
+
+## Requirements
+
+- Python 3.10+
+- Python package: `arxiv`
+- Zotero Desktop
+- Chrome DevTools MCP
+- Zotero MCP
+
+Optional component:
+
+- Obsidian MCP
+
+## Platform Support
+
+- Windows: tested
+- Linux / Ubuntu: portable implementation completed, but not yet smoke-tested
+- macOS: portable implementation completed, but not yet smoke-tested
+
+## Installation
+
+Place this repository in your Codex skills directory and keep the directory name as:
+
+```text
+literature-research-pipeline
+```
+
+Install the Python dependency:
+
+```bash
+pip install arxiv
+```
+
+Run the environment preflight check:
+
+```text
+<python> "<skill-dir>/scripts/preflight.py" --json
+```
+
+On Windows, `<python>` is typically `python` or `py -3`. On Linux and macOS, it is typically `python3`.
+
+## MCP Dependencies
+
+This repository does not bundle MCP server code. Configure the following components separately before use:
+
+- Chrome DevTools MCP: browser automation for Google Scholar and IEEE Xplore
+- Zotero MCP: Zotero library lookup, deduplication, tags, and reading notes
+- Obsidian MCP: optional topic synthesis in Obsidian
+
+Zotero Desktop must also expose its local Connector API:
+
+```text
+http://127.0.0.1:23119/connector
+```
+
+## Release Status
+
+Current version: `v0.1.0-beta`
+
+The workflow has been tested on Windows. Linux / Ubuntu and macOS have not yet received complete real-machine testing.
+
+See [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) for upstream attribution and license notes.
