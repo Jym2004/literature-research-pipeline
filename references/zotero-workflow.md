@@ -37,6 +37,38 @@ needs-pdf-retry
 
 Create at most one standardized child note per paper. Update the existing standardized note when better evidence becomes available. Do not overwrite unrelated notes.
 
+## Note Write-Back Rules
+
+Use Zotero MCP for reading-card notes:
+
+```text
+write_note(action="create", parentKey="<itemKey>", content="<reading-card>", tags=["summarized", "<state>"])
+write_note(action="update", noteKey="<noteKey>", content="<updated-reading-card>")
+write_tag(action="add", itemKey="<itemKey>", tags=["screened", "<state>", "summarized"])
+```
+
+Do not use the Connector API's `/connector/saveItems` endpoint to create child
+notes for existing Zotero items. Connector `parentItemID` values are scoped to
+the same Connector save session and are not the same as persistent Zotero item
+keys such as `U7FBRAG4`. Using Connector note payloads with existing item keys
+can create standalone notes in the selected collection instead of child notes.
+
+Do not rely on Zotero's local `/api/users/...` HTTP endpoint for write-back
+unless the current environment is explicitly verified to support writes. Some
+Zotero versions expose local API reads while returning "Endpoint does not
+support method" for writes. Prefer Zotero MCP write tools when available.
+
+Before creating a new note, inspect the parent item's existing notes. If a note
+contains the `## Paper Reading Card` header, update that note instead of
+creating another one.
+
+After writing, re-read the parent item and verify:
+
+- the reading card appears under the parent item's notes or children
+- the note is not a standalone collection-root note
+- the parent item has tags matching the content state, e.g. `pdf-attached` and
+  `summarized`
+
 ```markdown
 ## Paper Reading Card
 Source Basis: pdf-attached|html-fulltext|abstract-only

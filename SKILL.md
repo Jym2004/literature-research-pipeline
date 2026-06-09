@@ -17,7 +17,7 @@ Require:
 
 - Chrome DevTools MCP for Google Scholar and IEEE Xplore browser operations
 - Zotero Desktop and its local Connector API at `http://127.0.0.1:23119/connector`
-- Zotero MCP for library de-duplication, child notes, and tags
+- Zotero MCP for library de-duplication, content retrieval, child-note write-back, and tags
 - Python 3.10 or later
 
 Treat Obsidian MCP as optional. Use it only when the user requests a topic map, reading plan, method comparison, reproduction roadmap, or durable Obsidian note.
@@ -28,7 +28,11 @@ Before a full run, execute:
 <python> "<skill-dir>/scripts/preflight.py" --json
 ```
 
-The preflight script cannot inspect MCP availability. Confirm the required MCP tools separately before browser or Zotero MCP work.
+The preflight script cannot inspect MCP availability. Confirm the required MCP
+tools separately before browser or Zotero MCP work. For a full run, Zotero MCP
+must expose note/tag write tools, such as `write_note` and `write_tag`; if note
+write-back tools are unavailable, stop before the reading-card write-back step
+instead of creating standalone notes through the Connector API.
 Read [references/platform-support.md](references/platform-support.md) when
 installing on Windows, Linux, or macOS.
 
@@ -50,7 +54,12 @@ Override these defaults when the user specifies a scope or count.
 
 ### 1. Check Preconditions
 
-Run `scripts/preflight.py`. Confirm Chrome DevTools MCP and Zotero MCP are available. Confirm the selected Zotero collection is writable. Stop before import if the Connector API or target collection is unavailable.
+Run `scripts/preflight.py`. Confirm Chrome DevTools MCP and Zotero MCP are
+available. Confirm the selected Zotero collection is writable. Confirm Zotero
+MCP can create child notes and update tags before promising a complete pipeline
+run. Stop before import if the Connector API or target collection is
+unavailable. Stop before note write-back if Zotero MCP note/tag write tools are
+unavailable.
 
 ### 2. Search Sources
 
@@ -139,7 +148,15 @@ Use the best available evidence in this order:
 2. full-text HTML or webpage
 3. abstract only
 
-Write or update one standardized Zotero child note per paper. Do not overwrite unrelated user notes. Use the reading-card template and state tags in [references/zotero-workflow.md](references/zotero-workflow.md).
+Write or update one standardized Zotero child note per paper. Do not overwrite
+unrelated user notes. Use Zotero MCP note tools, not the Connector API, for
+child-note write-back to existing items. Use the reading-card template and state
+tags in [references/zotero-workflow.md](references/zotero-workflow.md).
+
+After writing, verify each parent item with Zotero MCP and confirm the reading
+card appears under that parent's `notes` or children. If a note is created in
+the collection root or as a standalone item, report the mistake and ask before
+deleting it.
 
 State uncertainty explicitly for `abstract-only` and `html-fulltext` summaries.
 
@@ -160,6 +177,9 @@ PDF parsing, Serper discovery fallback, or arXiv TeX-source deep reading, read
 - Zotero Connector unavailable: stop before import.
 - PDF unavailable: keep metadata, use the next text source, and mark the state.
 - Zotero MCP unavailable: allow search and screening, but stop before de-duplication or note write-back.
+- Zotero MCP lacks `write_note` or `write_tag`: allow search, screening, import,
+  and attachment work, but stop before reading-card write-back. Do not use
+  `/connector/saveItems` to attach child notes to existing Zotero items.
 
 ## Publishing
 
